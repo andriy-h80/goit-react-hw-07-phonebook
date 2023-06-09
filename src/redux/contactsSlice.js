@@ -1,32 +1,55 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { nanoid } from 'nanoid';
-import initialContacts from '../contacts.json';
+import { fetchContacts, addContact, deleteContact } from "./operations";
+
+const handlePending = state => {
+  state.isLoading = true;
+};
+const handleRejected = (state, action) => {
+  state.isLoading = false;
+  state.error = action.payload;
+};
 
 const contactsSlice = createSlice({
   name: "contacts",
-  initialState: initialContacts,
-  reducers: {
-    addContact: {
-      reducer(state, action) {
-        state.push(action.payload);
-        // return [...state, action.payload];
-      },
-      prepare(name, number) {
-        return {
-          payload: {
-            name,
-            number,
-            id: nanoid(3),
-          },
-        };
-      },
+  initialState: {
+    contacts: [],
+    isLoading: false,
+    error: null,
+  },
+  // Додаємо обробку зовнішніх екшенів
+  extraReducers: {
+    [fetchContacts.pending]: handlePending,
+    [addContact.pending]: handlePending,
+    [deleteContact.pending]: handlePending,
+
+    [fetchContacts.rejected]: handleRejected,
+    [addContact.rejected]: handleRejected,
+    [deleteContact.rejected]: handleRejected,
+
+    [fetchContacts.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      state.items = action.payload;
     },
-    deleteContact(state, action) {
-      const id = action.payload;
-      return state.filter((contact) => contact.id !== id);
+    [addContact.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      state.contacts.push(action.payload);
+      // return [...state.contacts, action.payload];
+    },
+    [deleteContact.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      const index = state.items.findIndex(
+        task => task.id === action.payload.id
+      );
+      state.items.splice(index, 1);
     },
   },
 });
+
 // Експортуємо генератори екшенів та редюсер
-export const { addContact, deleteContact } = contactsSlice.actions;
+// export const { addContact, deleteContact } = contactsSlice.actions;
+// export const contactsReducer = contactsSlice.reducer;
+
 export const contactsReducer = contactsSlice.reducer;

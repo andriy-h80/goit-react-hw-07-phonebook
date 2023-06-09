@@ -1,16 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addContact } from '../../redux/contactsSlice';
-import { getContacts } from '../../redux/selectors';
+import { addContact } from "../../redux/operations";
+import { selectContacts } from '../../redux/selectors';
 import { Form, ButtonAdd } from './ContactForm.styled';
 
 const ContactForm = () => {
 
     const dispatch = useDispatch();
-    const contacts = useSelector(getContacts);
+    const contacts = useSelector(selectContacts);
 
     const handleSubmit = event => {
         event.preventDefault();
-        const { name, number } = event.currentTarget;
+        const { name, phone } = event.currentTarget;
 
         const isContactExist = contacts.some(
             contact => contact.name.toLowerCase() === name.value.toLowerCase()
@@ -22,7 +22,7 @@ const ContactForm = () => {
             return;
         }
 
-        dispatch(addContact(name.value, number.value));
+        dispatch(addContact({name: name.value, phone: phone.value}));
         event.currentTarget.reset();
       };
 
@@ -39,15 +39,15 @@ const ContactForm = () => {
             id="name"
             />
 
-            <label htmlFor="number">
+            <label htmlFor="phone">
                 Number: 
             </label>
             <input
             type="tel"
-            name="number"
+            name="phone"
             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +" required
-            id="number"
+            id="phone"
             />  
 
             <ButtonAdd type='submit' aria-label="Add contact">Add contact</ButtonAdd>          
