@@ -13,7 +13,7 @@ export const Container = styled.div`
     justify-content: center;
     align-items: center;
     font-size: 24px;
-    width: 500px;
+    width: 700px;
     background-color: #eeea9e;
     border-radius: 8px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 10px;
